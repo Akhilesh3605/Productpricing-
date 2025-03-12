@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Pricing Form</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <section class="container">
+        <!-- Left Section with Image -->
+        <div class="image-section">
+            <img src="images/Screenshot 2025-03-12 175421.png" alt="Cleaning Service">
+        </div>
+
+        <!-- Right Section with Form -->
+        <div class="form-section">
+            <h2>Contact Us For Services</h2>
+            <form id="serviceForm" action="https://getform.io/f/bllygndb" method="POST">
+                <input type="text" id="name" name="name" placeholder="Your Name" required>
+                
+                <select id="service" name="service" onchange="updateQuantityOptions(); calculatePrice()" required>
+                    <option value="">Select Service</option>
+                    <option data-prices='{"Deep Cleaning": 80, "Regular Cleaning": 50, "Monthly Cleaning": 200, "Weekly Cleaning": 150, "Bi-weekly Cleaning": 100}'>House Cleaning</option>
+                    <option data-prices='{"Deep Cleaning": 120, "Regular Cleaning": 70, "Monthly Cleaning": 250, "Weekly Cleaning": 180, "Bi-weekly Cleaning": 130}'>Commercial Cleaning</option>
+                    <option data-prices='{"Waxing": 300, "Airbnb Cleaning": 1000}'>Special Cleaning</option>
+                </select>
+                
+                <select id="Price" name="Price" onchange="calculatePrice()" required>
+                    <option value="">Select Quantity</option>
+                </select>
+                
+                <input type="email" id="email" name="email" placeholder="Your Email" required>
+                <input type="text" id="company" name="company" placeholder="Company Name">
+                <input type="text" id="address" name="address" placeholder="Your Address" required>
+                <textarea id="message" name="message" placeholder="Write Message"></textarea>
+                <p>Total Price: <span id="total-price">$0</span></p>
+
+                <!-- Hidden inputs for Getform.io -->
+                <input type="hidden" name="_next" value="https://yourwebsite.com/thank-you.html">
+                <input type="hidden" name="_subject" value="New Service Request">
+
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </section>
+
+    <script>
+        function updateQuantityOptions() {
+            let serviceDropdown = document.getElementById("service");
+            let quantityDropdown = document.getElementById("Price");
+            let selectedOption = serviceDropdown.options[serviceDropdown.selectedIndex];
+
+            let serviceData = selectedOption.dataset.prices ? JSON.parse(selectedOption.dataset.prices) : {};
+
+            quantityDropdown.innerHTML = '<option value="">Select ....</option>';
+            
+            for (let key in serviceData) {
+                let option = document.createElement("option");
+                option.value = serviceData[key];
+                option.textContent = key;
+                quantityDropdown.appendChild(option);
+            }
+
+            // Update the selected service and quantity preview
+            updateSummary();
+        }
+
+        function calculatePrice() {
+            let quantityDropdown = document.getElementById("Price");
+            let totalPrice = parseInt(quantityDropdown.value) || 0;
+            document.getElementById("total-price").innerText = "$" + totalPrice;
+
+            // Update the selected service and quantity preview
+            updateSummary();
+        }
+
+        function updateSummary() {
+            let serviceDropdown = document.getElementById("service");
+            let quantityDropdown = document.getElementById("Price");
+
+            let selectedService = serviceDropdown.options[serviceDropdown.selectedIndex]?.text || "None";
+            let selectedQuantity = quantityDropdown.options[quantityDropdown.selectedIndex]?.text || "None";
+
+            document.getElementById("selected-service").innerText = selectedService;
+            document.getElementById("selected-Price").innerText = selectedQuantity;
+
+            // Show the summary
+            document.getElementById("summary").style.display = "block";
+        }
+    </script>
+</body>
+</html>
