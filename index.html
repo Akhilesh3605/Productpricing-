@@ -10,7 +10,7 @@
     <section class="container">
         <!-- Left Section with Image -->
         <div class="image-section">
-            <img src="Screenshot 2025-03-12 175421.png" alt="Cleaning Service">
+            <img src="images/Screenshot 2025-03-12 175421.png" alt="Cleaning Service">
         </div>
 
         <!-- Right Section with Form -->
@@ -26,20 +26,26 @@
                     <option data-prices='{"Waxing": 300, "Airbnb Cleaning": 1000}'>Special Cleaning</option>
                 </select>
                 
-                <select id="Price" name="Price" onchange="calculatePrice()" required>
+                <select id="Price" name="Price" onchange="showQuantityInput(); calculatePrice()" required>
                     <option value="">Select Quantity</option>
                 </select>
                 
+                <!-- Quantity input field (hidden by default) -->
+                <div id="quantity-container" style="display: none;">
+                    <label for="quantity">Number of Services:</label>
+                    <input type="number" id="quantity" name="quantity" min="1" value="1" oninput="calculatePrice()">
+                </div>
+
                 <input type="email" id="email" name="email" placeholder="Your Email" required>
                 <input type="text" id="company" name="company" placeholder="Company Name">
                 <input type="text" id="address" name="address" placeholder="Your Address" required>
                 <textarea id="message" name="message" placeholder="Write Message"></textarea>
                 <p>Total Price: <span id="total-price">$0</span></p>
-
+                
                 <!-- Hidden inputs for Getform.io -->
                 <input type="hidden" name="_next" value="https://yourwebsite.com/thank-you.html">
                 <input type="hidden" name="_subject" value="New Service Request">
-
+                
                 <button type="submit">Submit</button>
             </form>
         </div>
@@ -61,32 +67,27 @@
                 option.textContent = key;
                 quantityDropdown.appendChild(option);
             }
+            
+            document.getElementById("quantity-container").style.display = "none";
+        }
 
-            // Update the selected service and quantity preview
-            updateSummary();
+        function showQuantityInput() {
+            let quantityDropdown = document.getElementById("Price");
+            if (quantityDropdown.value) {
+                document.getElementById("quantity-container").style.display = "block";
+            } else {
+                document.getElementById("quantity-container").style.display = "none";
+            }
+            calculatePrice();
         }
 
         function calculatePrice() {
             let quantityDropdown = document.getElementById("Price");
-            let totalPrice = parseInt(quantityDropdown.value) || 0;
+            let selectedPrice = parseInt(quantityDropdown.value) || 0;
+            let quantity = parseInt(document.getElementById("quantity").value) || 1;
+            let totalPrice = selectedPrice * quantity;
+            
             document.getElementById("total-price").innerText = "$" + totalPrice;
-
-            // Update the selected service and quantity preview
-            updateSummary();
-        }
-
-        function updateSummary() {
-            let serviceDropdown = document.getElementById("service");
-            let quantityDropdown = document.getElementById("Price");
-
-            let selectedService = serviceDropdown.options[serviceDropdown.selectedIndex]?.text || "None";
-            let selectedQuantity = quantityDropdown.options[quantityDropdown.selectedIndex]?.text || "None";
-
-            document.getElementById("selected-service").innerText = selectedService;
-            document.getElementById("selected-Price").innerText = selectedQuantity;
-
-            // Show the summary
-            document.getElementById("summary").style.display = "block";
         }
     </script>
 </body>
